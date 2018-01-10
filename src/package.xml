@@ -1758,7 +1758,10 @@
         <members>Address__c</members>
         <members>Allocation__c</members>
         <members>Allocations_Settings__c</members>
+        <members>BGE_Status_list__c</members>
         <members>Batch_Data_Entry_Settings__c</members>
+        <members>Batch_Template_Field__c</members>
+        <members>Batch_Template__c</members>
         <members>Batch__c</members>
         <members>DataImportBatch__c</members>
         <members>DataImport__c</members>
