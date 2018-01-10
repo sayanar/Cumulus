@@ -2,6 +2,17 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Cumulus</fullName>
     <types>
+	<members>BGE_AuraController</members>
+	<members>BGE_BatchController</members>
+	<members>BGE_DonationController</members>
+	<members>BGE_DynamicalColumnWrapper</members>
+        <members>BGE_HandsOnGridController</members>
+        <members>BGE_HandsOnGridControllerForTest</members>
+        <members>BGE_HandsOnGridTemplateHelper</members>
+        <members>BGE_TemplateController</members>
+        <members>BGE_TemplateNameHelper</members>
+        <members>BGE_TemplateTrigger</members>
+        <members>BGE_TemplateTriggerHandler</members>
         <members>ACCT_AccountMerge_TDTM</members>
         <members>ACCT_AccountMerge_TEST</members>
         <members>ACCT_Accounts_TDTM</members>
@@ -423,6 +434,7 @@
         <members>STG_PanelUpdatePrimaryContact</members>
         <members>STG_PanelUserRollup</members>
         <members>STG_SettingsManager</members>
+	<members>BGE_HandsOnGrid</members>
         <name>ApexPage</name>
     </types>
     <types>
@@ -445,6 +457,7 @@
         <members>TDTM_Relationship</members>
         <members>TDTM_Task</members>
         <members>TDTM_User</members>
+	<members>BGE_TemplateTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>
@@ -470,6 +483,39 @@
         <members>dataProviderInterface</members>
         <members>defaultTokens</members>
         <members>svg</members>
+	<members>BGE_Application</members>
+        <members>BGE_Batch</members>
+        <members>BGE_BatchContainer</members>
+        <members>BGE_BatchCreation</members>
+        <members>BGE_BatchDataImport</members>
+        <members>BGE_BatchDataImportNew</members>
+        <members>BGE_BatchGrid</members>
+        <members>BGE_BatchList</members>
+        <members>BGE_BatchListTable</members>
+        <members>BGE_BatchListTableRow</members>
+        <members>BGE_BatchListTableRowSelectEvent</members>
+        <members>BGE_BatchMenu</members>
+        <members>BGE_BatchMenuDismissModalEvent</members>
+        <members>BGE_BatchMenuShowGrid</members>
+        <members>BGE_BatchMenuShowGridEvent</members>
+        <members>BGE_BatchMenuShowModalEvent</members>
+        <members>BGE_BatchNew</members>
+        <members>BGE_BatchSelection</members>
+        <members>BGE_EnterData</members>
+        <members>BGE_GiftSelectionChange</members>
+        <members>BGE_Header</members>
+        <members>BGE_Initial</members>
+        <members>BGE_PageChange</members>
+        <members>BGE_ProgressIndicator</members>
+        <members>BGE_RegisterEvent</members>
+        <members>BGE_ReviewScreen</members>
+        <members>BGE_SearchBar</members>
+        <members>BGE_TemplateCreation</members>
+        <members>BGE_TemplateRow</members>
+        <members>BGE_TemplateSelection</members>
+        <members>BGE_ValidateANDCommit</members>
+        <members>BatchDataEntryPOCGrid</members>
+        <members>BatchDataImportMain</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
