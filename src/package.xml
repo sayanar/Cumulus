@@ -2174,6 +2174,7 @@
         <name>ReportType</name>
     </types>
     <types>
+	<members>BGEResources</members>
         <members>CumulusStaticResources</members>
         <members>SLDS</members>
         <name>StaticResource</name>

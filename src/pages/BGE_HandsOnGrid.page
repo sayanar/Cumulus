@@ -1,0 +1,683 @@
+<apex:page controller="BGE_HandsOnGridController" showHeader="false" sidebar="false" docType="html-5.0">
+
+    <html ng-app="myApp" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+
+        <!-- AngularJs 1.6.4 -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/angular.min.js')}"/>
+
+        <!-- Hands on table 0.24.3 -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/handsontable.full.min.js')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.BGEResources, '/css/handsontable.full.min.css')}"/>
+
+        <!-- Hands on table for Angular 0.13 -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/ngHandsontable.min.js')}"/>
+
+        <!-- jQuery JavaScript 3.2.1 -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/jquery.min.js')}"/>
+
+        <!-- Notify.js 0.4.2 -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/notify.min.js')}"/>
+
+        <!-- Custom CSS -->
+        <apex:stylesheet value="{!URLFOR($Resource.BGEResources, '/css/BGEStyle.css')}"/>
+
+        <style>
+            .slds-scope button {
+
+                overflow: hidden;
+            }
+        </style>
+
+        <!-- Custom Javascript -->
+        <apex:includeScript value="{!URLFOR($Resource.BGEResources, '/js/BGEUtils.js')}"/>
+
+        <script>
+
+            var myApp;
+
+            myApp = angular.module('myApp', ['ngHandsontable'])
+            myApp.controller('MainCtrl', function($scope, $compile) {
+
+                var data = JSON.parse('{!jsonString}');
+                var activeData = JSON.parse('{!jsonString}');
+                var columnsData = JSON.parse('{!jsonColumnsString}');
+
+                /*
+                    var getData = (function () {
+
+                        var mydata = JSON.parse('{!jsonString}');
+
+                        return function () {
+
+                            var page  = parseInt(window.location.hash.replace('#', ''), 10) || 1,
+                                        limit = 20,
+                                        row   = (page - 1) * limit,
+                                        count = page * limit,
+                                        part  = [];
+
+                            for (;row < count;row++) {
+
+                                part.push(mydata[row]);
+                            }
+
+                            return part;
+                        }
+                    })();
+
+                    var data = getData();
+                */
+
+                table = document.getElementById('my-hot-table');
+                searchField = document.getElementById('handsonSearch');
+
+                var changesToSave = {};
+                var lastSelectedRow = null;
+                var arrayForChanged = [];
+
+                // Flag to prevent a bug when deleting multiple records.
+                var deletingRecords = false;
+
+                // Flag for updating using sticky fields
+                stickyEdit = false;
+
+                // Needed for afterCreateRow:as it fires before afterInit: & confuses all
+                var renderState = false;
+
+                document.getElementById("totalOfRecords").value = data.length;
+
+                var total = 0;
+
+                for (var i=0; i < data.length; i++) {
+
+                    if (!isNaN(data[i].Donation_Amount__c)) {
+
+                        total = total + data[i].Donation_Amount__c;
+                    }
+                }
+
+                document.getElementById("totalAmount").value = total;
+
+                var dynamicColumns = [];
+
+                for (var i=0; i < columnsData.length; i++) {
+
+                    var col = new Object();
+                    var templateField = columnsData[i];
+
+
+                    // Sticky field values
+                    col.stickyField = templateField.stickyField;
+                    col.stickyFieldValue = templateField.stickyFieldValue;
+                    col.stickyFieldVisibility = templateField.stickyFieldVisibility;
+
+                    col.data = templateField.apiName;
+
+                    col.title = templateField.name + " <input type='text' value='" + col.stickyFieldValue + "' id='nameInput' onkeypress='populateColumn(" + i + ",this.value,event);' /> ";
+                    col.type = templateField.type;
+
+
+                    if (templateField.type == "date") {
+
+                        col.title = templateField.name + " <input type='date' id='nameInput' onkeypress='populateColumn(" + i + ",this.value,event);' /> ";
+
+                        col.dateFormat = "YYYY-MM-DD";
+                        col.correctFormat = true;
+                        col.defaultDate = "today";
+                    }
+
+                    if (templateField.isDecimal == "true") {
+
+                        col.title = templateField.name + " <input type='numeric' id='nameInput' onkeypress='populateColumn(" + i + ",this.value,event);' /> ";
+
+                        col.format = '$0,0.00';
+                    }
+
+                    dynamicColumns.push(col);
+                }
+
+                // BEGINNING OF TABLE CONFIGURATION
+
+                hot = new Handsontable(table, {
+
+                    data: data,
+                    outsideClickDeselects: false, //you must add this, otherwise getSelected() will return 'undefined'
+                    columnSorting: true,
+                    observeChanges: true,
+                    persistantState: false,
+                    contextMenu: true,
+                    manualColumnResize: true,
+                    readOnly: false,
+                    search: true,
+                    sortIndicator: true,
+                    stretchH: 'all',
+                    autoWrapRow: false,
+                    currentRowClassName: 'currentRow',
+                    minSpareRows: 1, // always keep at least 1 spare row at the bottom.
+                    fillHandle: true,
+                    columns: dynamicColumns,
+                    cells: function(rowIndex, colIndex, colName) {
+
+                        var cellProperties;
+
+                        cellProperties = {};
+
+                        if (colName === 'Name') {
+
+                            cellProperties.width = 150;
+                        }
+                    },
+                    beforeRemoveRow: function(index, amount){
+
+                        if (!deletingRecords) {
+
+                            var selection = hot.getSelected();
+
+                            if(selection != undefined) {
+
+                                var r = confirm("Delete record?");
+
+                                if (r == true) {
+
+                                    // Set the flag on true so the "before remove" event does not fire the individual remove function hence showing an exception error.
+                                    deletingRecords = true;
+
+                                    var start = selection[0];
+                                    var end = selection[2];
+                                    var gridData = hot.getData();
+                                    var batchIds = [];
+
+                                    for (var r=start;r<=end;r++){
+
+                                        var row = gridData[r];
+                                        var dataRowId = row[0];
+
+                                        batchIds.push(dataRowId);
+                                    }
+
+                                    Visualforce.remoting.Manager.invokeAction(
+                                        '{!$RemoteAction.BGE_HandsOnGridController.deleteAll}',
+                                        batchIds,
+                                        function (result, event) {
+
+                                            if (result == null) {
+
+                                                $.notify("Records deleted",'success');
+                                            }
+                                            if (result != null && result.success) {
+
+                                                $.notify(result.messages[0], 'success');
+                                            }
+                                            else if (result != null && result.messages != null) {
+
+                                                for (var i = 0; i < result.messages.length; i++) {
+
+                                                    $.notify(result.messages[i], 'error');
+                                                }
+                                            }
+
+                                            $scope.$apply();
+                                        }
+                                    );
+
+                                    hot.alter('remove_row');
+                                    hot.deselectCell();
+
+                                        // Set the flag back on false so we can continue deleting records individualy.
+                                        deletingRecords = false;
+                                    }
+                                    else {
+
+                                        return false;
+                                    }
+                                }
+                                else{
+
+                                    alert("please select cell first");
+                                }
+                            }
+                        },
+
+
+                        afterRemoveRow: function(index, amount){
+
+                            document.getElementById("totalOfRecords").value = data.length - 1;
+
+                            total = 0;
+
+                            for (var i=0; i < data.length; i++) {
+
+                                if (!isNaN(data[i].Donation_Amount__c)) {
+
+                                    total = total + data[i].Donation_Amount__c;
+                                }
+                            }
+
+                            document.getElementById("totalAmount").value = total;
+                        },
+
+                        beforeChange: function(changes, source) {
+
+                            // restore table after reload of a page
+                            if (source === 'loadData') {
+
+                                for (var index=0; index < data.length -1; index++) {
+
+                                    for (var i=0; i < columnsData.length; i++) {
+
+                                        var column = columnsData[i];
+
+                                        if (column.stickyField) {
+
+                                            this.setDataAtCell(index, i, column.stickyFieldValue);
+                                        }
+                                    }
+                                }
+
+                                return;
+                            }
+                        },
+
+                        afterChange: function (changes, source) {
+
+                            // restore table after reload of a page
+                            if (source === 'loadData') {
+
+                                return;
+                            }
+
+                            if((source === 'paste'  || source === 'autofill') && deletingRecords === false) {
+
+                                // Save all records
+                                triggerSaveAll();
+                            }
+                            else if (stickyEdit === true && deletingRecords === false) {
+
+                                stickyEdit = false;
+
+                                // Save all records
+                                triggerSaveAll();
+                            }
+                            else {
+
+                                var row  = changes[0][0];
+                                var prop = changes[0][1];
+                                var oldValue = changes[0][2];
+                                var newValue = changes[0][3];
+
+                                var dataRowId = this.getDataAtRowProp(row, 'Id');
+
+                                if (!changesToSave[dataRowId]) {
+
+                                    changesToSave[dataRowId] = {};
+                                }
+
+                                $scope.currentDataImport = this.getDataAtRow(row);
+
+                                changesToSave[dataRowId][prop] = newValue;
+                            }
+
+                            // After change always creates an empty row, so count one less.
+                            document.getElementById("totalOfRecords").value = data.length-1;
+
+                            total = 0;
+
+                            for (var i=0; i < data.length; i++) {
+
+                                if (!isNaN(data[i].Donation_Amount__c)) {
+
+                                    total = total + data[i].Donation_Amount__c;
+                                }
+                            }
+
+                            document.getElementById("totalAmount").value = total;
+                        },
+
+                        afterSelectionEnd: function(row, column, rowEnd, columnEnd) {
+
+                            var dataRowId = this.getDataAtRowProp(lastSelectedRow, 'Id');
+                            var lastDataImportId;
+                            var self = this;
+
+                            if (lastSelectedRow !== null && lastSelectedRow !== row) {
+
+                                if (changesToSave[dataRowId]) {
+
+                                    triggerSave(dataRowId, changesToSave[dataRowId], function(lastDataImportId) {
+
+                                        if (dataRowId == null) {
+
+                                            self.setDataAtCell(row-1, 0, lastDataImportId);
+                                        }
+                                    });
+
+                                    changesToSave[dataRowId] = null;
+                                }
+                            }
+
+                            lastSelectedRow = row;
+                        },
+
+                        afterOnCellMouseDown: function(event, coords){
+                            // 'coords.row < 0' because we only want to handle clicks on the header row
+                            if (coords.row < 0){
+
+                                hot.deselectCell();
+                            }
+                        },
+                        afterInit: function () {
+
+                            renderState = true;
+                        },
+                        afterCreateRow: function(index) {
+
+                            if(renderState == true) {
+                                
+                                for (var i=0; i < columnsData.length; i++) {
+
+                                    var column = columnsData[i];
+
+                                    if (column.stickyField == true) {
+
+                                        hot.setDataAtCell(index, i, column.stickyFieldValue);
+                                    }
+                                }
+                            }
+
+                            return;
+                        }
+                });
+
+                // END OF TABLE CONFIGURATION
+
+
+                // BEGIN DEFINING ANGULAR FUNCTIONS
+
+                function triggerSave(id, data, callback) {
+
+                    // Get Batch Id from URL
+                    var pBatchId = getAllUrlParams().batchid;
+
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.BGE_HandsOnGridController.save}',
+                        id,
+                        pBatchId,
+                        JSON.stringify(data),
+
+                        function (result, event) {
+
+                            if (result == null) {
+
+                                $.notify("Record saved",'success');
+                            }
+                            if (result != null && result.success) {
+
+                                $.notify(result.messages[0], 'success');
+
+                                if (callback != null && callback != undefined) {
+
+                                    callback(result.dataImportIds[0]);
+                                }
+                            }
+                            else if (result != null && result.messages != null) {
+
+                                for (var i = 0; i < result.messages.length; i++) {
+
+                                    $.notify(result.messages[i], 'error');
+                                }
+                            }
+
+                            $scope.$apply();
+                        }
+                    );
+                }
+
+                function triggerSaveAll() {
+
+                    var pBatchId = getAllUrlParams().batchid;
+
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.BGE_HandsOnGridController.saveAll}',
+                        pBatchId,
+                        JSON.stringify(hot.getSourceData(0, 0, hot.countRows() - 1, hot.countCols() - 1)),
+                        function (result, event) {
+
+                            if (result == null) {
+
+                                $.notify("Changes saved",'success');
+                            }
+                            if (result != null && result.success) {
+
+                                $.notify(result.messages[0], 'success');
+
+                                return;
+                            }
+                            else if (result != null && result.messages != null) {
+
+                                for (var i = 0; i < result.messages.length; i++) {
+
+                                    $.notify(result.messages[i], 'error');
+                                }
+                            }
+
+                            $scope.$apply();
+                        }
+                    );
+                }
+
+                function triggerDryRunProcess() {
+
+                    $('.dryrunbutton').on('click', function () {
+
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.BGE_HandsOnGridController.dryRunProcess}',
+                            function (result, event) {
+
+                                if (result != null && result.messages != null) {
+
+                                    for (var i = 0; i < result.messages.length; i++) {
+
+                                        $.notify(result.messages[i], 'error');
+                                    }
+                                }
+
+                                $scope.$apply();
+                            }
+                        );
+                    });
+                }
+
+                function triggerDeleteAll() {
+
+                    $('.deletebutton').on('click', function () {
+
+                        var selection = hot.getSelected();
+
+                        if(selection != undefined) {
+
+                            var r = confirm("Delete record?");
+
+                            if (r == true) {
+
+                                // Set the flag on true so the "before remove" event does not fire the individual remove function hence showing an exception error.
+                                deletingRecords = true;
+
+                                var start = selection[0];
+                                var end = selection[2];
+                                var gridData = hot.getData();
+                                var batchIds = [];
+
+                                for (var r=start;r<=end;r++){
+
+                                    var row = gridData[r];
+                                    var dataRowId = row[0];
+
+                                    batchIds.push(dataRowId);
+                                }
+
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.BGE_HandsOnGridController.deleteAll}',
+                                    batchIds,
+                                    function (result, event) {
+
+                                        if (result == null) {
+
+                                            $.notify("Records deleted",'success');
+                                        }
+                                        if (result != null && result.success) {
+
+                                        //    $.notify(result.messages[0], 'success');
+                                        }
+                                        else if (result != null && result.messages != null) {
+
+                                            for (var i = 0; i < result.messages.length; i++) {
+
+                                                $.notify(result.messages[i], 'error');
+                                            }
+                                        }
+
+                                        $scope.$apply();
+                                    }
+                                );
+
+                                hot.alter('remove_row', selection[0], selection[2]);
+                                hot.deselectCell();
+
+                                // Set the flag back on false so we can continue deleting records individualy.
+                                deletingRecords = false;
+                            }
+                            else {
+
+                                return false;
+                            }
+                        }
+                        else{
+
+                            alert("please select cell first");
+                        }
+                    });
+                }
+
+                triggerDeleteAll();
+                triggerDryRunProcess();
+
+                Handsontable.Dom.addEvent(searchField, 'keyup', function (event) {
+
+                    if(this.value === '') {
+
+                        hot.updateSettings({data: data});
+                    }
+                    else {
+
+                        var queryResult = hot.search.query(this.value);
+
+                        activeData = [];
+
+                        for (i = 0; i < queryResult.length; i++) {
+
+                            var object = queryResult[i];
+
+                            var row = data[object.row];
+
+                            console.log('ROW    ' + row);
+
+                            activeData.push(row);
+                        }
+
+                        hot.updateSettings({data: activeData});
+                        hot.render();
+                    }
+
+                });
+
+                // END DEFINING ANGULAR FUNCTIONS
+
+
+            /*    Handsontable.Dom.addEvent(window, 'hashchange', function (event) {
+
+                    hot.loadData(getData());
+                });*/
+            });
+
+
+        </script>
+
+        <apex:slds />
+
+        <div class="slds-scope">
+            <div id="notifications"></div>
+            <div id="wrapper" class="slds-form slds-form_stacked" ng-controller="MainCtrl as ctrl">
+
+                <!-- HEADER -->
+                <div class="slds-page-header">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-grid slds-wrap slds-grid_pull-padded">
+                                <div class="slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_4-of-6 slds-large-size_8-of-12">
+                                    <input type="search" id="handsonSearch" placeholder="search" class="slds-input" />
+                                </div>
+                                <div class="slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_2-of-6 slds-large-size_4-of-12">
+                                    <div class="slds-button-group" role="group">
+                                        <button class="deletebutton slds-button slds-button_neutral" title="Delete Selected Rows">
+                                            <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/action-sprite/svg/symbols.svg#delete" />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                        <button class="dryrunbutton slds-button slds-button_neutral" title="Dry Run Process">
+                                            <svg class="slds-button__icon slds-button__icon_left" aria-hidden="true">
+                                                <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/apexpages/slds/latest/assets/icons/action-sprite/svg/symbols.svg#change_record_type" />
+                                            </svg>
+                                            Dry Run
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- / HEADER -->
+
+                <!-- TABLE -->
+                <div class="scrollable">
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div id="my-hot-table" class="handsontable" />
+                        </div>
+                    </div>
+                </div>
+                <!-- / TABLE -->
+
+                <!-- FOOTER -->
+                <footer role="contentinfo" class="slds-p-around--large">
+                    <div class="slds-docked-form-footer">
+
+                            <label class="slds-form-element__label" for="totalOfRecords">Total of records</label>
+                            <div class="slds-form-element__control">
+                                <output id="totalOfRecords" placeholder="0" style="width: 150px;"/>
+                            </div>
+
+                            <label class="slds-form-element__label" for="totalAmount">Total amount</label>
+                            <div class="slds-form-element__control">
+                                <output id="totalAmount" placeholder="0" style="width: 150px;"/>
+                            </div>
+
+                        <!--<div class="slds-form-element">
+                            <div class="pagination">
+                                <div class="slds-button-group" role="group">
+                                    <a href="#1">1</a>
+                                    <a href="#2">2</a>
+                                    <a href="#3">3</a>
+                                    <a href="#4">4</a>
+                                    <a href="#5">5</a>
+                                    <a href="#6">6</a>
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                </footer>
+                <!-- / FOOTER -->
+
+            </div>
+        </div>
+    </html>
+</apex:page>
