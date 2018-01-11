@@ -275,6 +275,20 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Batch__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Lookup to the batch object to be used by BGE.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Lookup to the batch object to be used by BGE.</inlineHelpText>
+        <label>Batch</label>
+        <referenceTo>Batch__c</referenceTo>
+        <relationshipLabel>NPSP Data Imports</relationshipLabel>
+        <relationshipName>NPSP_Data_Imports</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
         <fullName>Campaign_Member_Status__c</fullName>
         <externalId>false</externalId>
         <label>Campaign Member Status</label>
