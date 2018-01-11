@@ -2072,6 +2072,7 @@
         <members>Batch__c.All</members>
         <members>Batch__c.Completed_Batches</members>
         <members>Batch__c.Open_Batches</members>
+        <members>Batch_Template__c.All</members>
         <members>DataImportBatch__c.All</members>
         <members>DataImport__c.All</members>
         <members>DataImport__c.Dry_Run_Errors</members>
@@ -2083,7 +2084,7 @@
         <members>General_Accounting_Unit__c.All</members>
         <members>Level__c.All</members>
         <members>Opportunity.To_Be_Acknowledged</members>
-        <members>Trigger_Handler__c.All</members>
+        <members>Trigger_Handler__c.All</members>        
         <name>ListView</name>
     </types>
     <types>
