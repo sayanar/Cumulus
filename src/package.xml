@@ -2,17 +2,6 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Cumulus</fullName>
     <types>
-	<members>BGE_AuraController</members>
-	<members>BGE_BatchController</members>
-	<members>BGE_DonationController</members>
-	<members>BGE_DynamicalColumnWrapper</members>
-        <members>BGE_HandsOnGridController</members>
-        <members>BGE_HandsOnGridControllerForTest</members>
-        <members>BGE_HandsOnGridTemplateHelper</members>
-        <members>BGE_TemplateController</members>
-        <members>BGE_TemplateNameHelper</members>
-        <members>BGE_TemplateTrigger</members>
-        <members>BGE_TemplateTriggerHandler</members>
         <members>ACCT_AccountMerge_TDTM</members>
         <members>ACCT_AccountMerge_TEST</members>
         <members>ACCT_Accounts_TDTM</members>
@@ -90,6 +79,17 @@
         <members>BDI_PostProcess_TEST</members>
         <members>BDI_SettingsUI_CTRL</members>
         <members>BDI_SettingsUI_TEST</members>
+        <members>BGE_AuraController</members>
+        <members>BGE_BatchController</members>
+        <members>BGE_DonationController</members>
+        <members>BGE_DynamicalColumnWrapper</members>
+        <members>BGE_HandsOnGridController</members>
+        <members>BGE_HandsOnGridControllerForTest</members>
+        <members>BGE_HandsOnGridTemplateHelper</members>
+        <members>BGE_TemplateController</members>
+        <members>BGE_TemplateNameHelper</members>
+        <members>BGE_TemplateTrigger</members>
+        <members>BGE_TemplateTriggerHandler</members>
         <members>CAM_CascadeDeleteLookups_TDTM</members>
         <members>CAM_CascadeDeleteLookups_TEST</members>
         <members>CAO_Constants</members>
@@ -315,6 +315,8 @@
         <members>UTIL_Currency_TEST</members>
         <members>UTIL_CustomSettingsFacade</members>
         <members>UTIL_CustomSettings_API</members>
+        <members>UTIL_DMLService</members>
+        <members>UTIL_DMLService_TEST</members>
         <members>UTIL_Debug</members>
         <members>UTIL_Describe</members>
         <members>UTIL_Describe_TEST</members>
@@ -377,6 +379,7 @@
         <members>BDI_BatchOverride</members>
         <members>BDI_DataImport</members>
         <members>BDI_DataImportDeleteBTN</members>
+        <members>BGE_HandsOnGrid</members>
         <members>CONV_Account_Conversion</members>
         <members>CON_ContactMerge</members>
         <members>CON_DeleteContactOverride</members>
@@ -434,10 +437,10 @@
         <members>STG_PanelUpdatePrimaryContact</members>
         <members>STG_PanelUserRollup</members>
         <members>STG_SettingsManager</members>
-	<members>BGE_HandsOnGrid</members>
         <name>ApexPage</name>
     </types>
     <types>
+        <members>BGE_TemplateTrigger</members>
         <members>TDTM_Account</members>
         <members>TDTM_Address</members>
         <members>TDTM_Affiliation</members>
@@ -457,33 +460,10 @@
         <members>TDTM_Relationship</members>
         <members>TDTM_Task</members>
         <members>TDTM_User</members>
-	<members>BGE_TemplateTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>
-        <members>HH_AddressChangedEvent</members>
-        <members>HH_AddressMgr</members>
-        <members>HH_AutoComplete</members>
-        <members>HH_AutoCompleteDataProvider</members>
-        <members>HH_AutoCompleteOption</members>
-        <members>HH_Canvas</members>
-        <members>HH_ContactAfterRemoveEvent</members>
-        <members>HH_ContactCard</members>
-        <members>HH_ContactChangedEvent</members>
-        <members>HH_ContactNewEvent</members>
-        <members>HH_ContactRemoveEvent</members>
-        <members>HH_ContactReorderEvent</members>
-        <members>HH_Container</members>
-        <members>HH_ContainerLoadedEvent</members>
-        <members>HH_HouseholdSavedEvent</members>
-        <members>ManageHHApp</members>
-        <members>autocomplete</members>
-        <members>autocompleteOption</members>
-        <members>autocompleteSelectListOption</members>
-        <members>dataProviderInterface</members>
-        <members>defaultTokens</members>
-        <members>svg</members>
-	<members>BGE_Application</members>
+        <members>BGE_Application</members>
         <members>BGE_Batch</members>
         <members>BGE_BatchContainer</members>
         <members>BGE_BatchCreation</members>
@@ -516,6 +496,28 @@
         <members>BGE_ValidateANDCommit</members>
         <members>BatchDataEntryPOCGrid</members>
         <members>BatchDataImportMain</members>
+        <members>HH_AddressChangedEvent</members>
+        <members>HH_AddressMgr</members>
+        <members>HH_AutoComplete</members>
+        <members>HH_AutoCompleteDataProvider</members>
+        <members>HH_AutoCompleteOption</members>
+        <members>HH_Canvas</members>
+        <members>HH_ContactAfterRemoveEvent</members>
+        <members>HH_ContactCard</members>
+        <members>HH_ContactChangedEvent</members>
+        <members>HH_ContactNewEvent</members>
+        <members>HH_ContactRemoveEvent</members>
+        <members>HH_ContactReorderEvent</members>
+        <members>HH_Container</members>
+        <members>HH_ContainerLoadedEvent</members>
+        <members>HH_HouseholdSavedEvent</members>
+        <members>ManageHHApp</members>
+        <members>autocomplete</members>
+        <members>autocompleteOption</members>
+        <members>autocompleteSelectListOption</members>
+        <members>dataProviderInterface</members>
+        <members>defaultTokens</members>
+        <members>svg</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
