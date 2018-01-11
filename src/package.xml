@@ -1783,6 +1783,13 @@
         <members>Relationship_Sync_Excluded_Fields__c</members>
         <members>Schedulable__c</members>
         <members>Trigger_Handler__c</members>
+        <members>Batch_Template_Field__c.Batch_Template__c</members>
+        <members>Batch_Template_Field__c.Read_Only__c</members>
+        <members>Batch_Template_Field__c.Required__c</members>
+        <members>Batch_Template_Field__c.Sticky_Field_Value__c</members>
+        <members>Batch_Template_Field__c.Sticky_Field_Visibility__c</members>
+        <members>Batch_Template_Field__c.Sticky_Field__c</members>
+        <members>Batch_Template__c.Description__c</members>        
         <name>CustomObject</name>
     </types>
     <types>
