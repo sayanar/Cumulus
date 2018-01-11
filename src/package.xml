@@ -882,16 +882,17 @@
         <members>npe4__Relationship_Settings__c.Enable_Custom_Field_Sync__c</members>
         <members>npo02__Household__c.Number_of_Household_Members__c</members>
         <members>npo02__Households_Settings__c.Matched_Donor_Role__c</members>
-	<members>Batch_Template_Field__c.Batch_Template__c</members>
-    	<members>Batch_Template__c.Description__c</members>
-	<members>DataImportBatch__c.Batch_Template__c</members>
-	<members>DataImportBatch__c.Status__c</members>
-	<members>Batch_Template_Field__c.Order__c</members>
-	<members>Batch_Template_Field__c.Read_Only__c</members>
-	<members>Batch_Template_Field__c.Required__c</members>
-	<members>Batch_Template_Field__c.Sticky_Field_Value__c</members>
-	<members>Batch_Template_Field__c.Sticky_Field_Visibility__c</members>
-	<members>Batch_Template_Field__c.Sticky_Field__c</members>
+    <members>Batch_Template_Field__c.Batch_Template__c</members>
+        <members>Batch_Template__c.Description__c</members>
+    <members>DataImportBatch__c.Batch_Template__c</members>
+    <members>DataImportBatch__c.Status__c</members>
+    <members>Batch_Template_Field__c.Order__c</members>
+    <members>Batch_Template_Field__c.Read_Only__c</members>
+    <members>Batch_Template_Field__c.Required__c</members>
+    <members>Batch_Template_Field__c.Sticky_Field_Value__c</members>
+    <members>Batch_Template_Field__c.Sticky_Field_Visibility__c</members>
+    <members>Batch_Template_Field__c.Sticky_Field__c</members>
+    <members>DataImport__c.Batch__c</members>
         <name>CustomField</name>
     </types>
     <types>
