@@ -936,7 +936,10 @@
         <members>Batch_Template_Field__c.Sticky_Field_Value__c</members>
         <members>Batch_Template_Field__c.Sticky_Field_Visibility__c</members>
         <members>Batch_Template_Field__c.Sticky_Field__c</members>
-        <members>Batch_Template__c.Description__c</members>               
+        <members>Batch_Template__c.Description__c</members>    
+        <members>Batch_Template_Field__c.Order__c</members>
+        <members>DataImportBatch__c.Batch_Template__c</members>
+        <members>DataImportBatch__c.Status__c</members>
         <name>CustomField</name>
     </types>
     <types>
@@ -2129,6 +2132,7 @@
         <members>Level__c.All</members>
         <members>Opportunity.To_Be_Acknowledged</members>
         <members>Trigger_Handler__c.All</members>
+        <members>Batch_Template__c.All</members>
         <name>ListView</name>
     </types>
     <types>

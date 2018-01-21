@@ -1,4 +1,4 @@
-global class BGE_HandsOnGridController{
+global class BGE_HandsOnGridController {
 
 
     public static String jsonString {get; set;}
@@ -17,6 +17,8 @@ global class BGE_HandsOnGridController{
 
     public Boolean validated {get; set;}
 
+    private static Batch_Template_Field__c[] templateFields;
+
 
     public BGE_HandsOnGridController() {
 
@@ -27,6 +29,7 @@ global class BGE_HandsOnGridController{
         // Get the BatchId from the URL.
         findBatchId();
         findTemplateId();
+
         // Get all Template fields and load columns.
         loadDynamicColumns();
 
@@ -63,7 +66,9 @@ global class BGE_HandsOnGridController{
 
     private static void loadDynamicColumns() {
 
-        Batch_Template_Field__c[] templateFields = new Batch_Template_Field__c[]{};
+    //    Batch_Template_Field__c[] templateFields = new Batch_Template_Field__c[]{};
+        templateFields = new Batch_Template_Field__c[]{};
+
         BGE_DynamicalColumnWrapper column;
         columns = new BGE_DynamicalColumnWrapper[]{};
 
@@ -93,6 +98,30 @@ global class BGE_HandsOnGridController{
      */
     private static void loadData(Id pBatchId) {
 
+
+        String query = 'SELECT ';
+
+        for (Batch_Template_Field__c field : templateFields) {
+
+            // This is the first record avoid adding the ',' character
+            if (field.Id == templateFields[0].Id) {
+
+                query = query + field.Name;
+            }
+            else {
+
+                query = query + ', ' + field.Name;
+            }
+
+        }
+
+        query = query + ' FROM DataImport__c WHERE NPSP_Data_Import_Batch__c = \'' +  pBatchId +'\'' + ' ORDER BY createdDate ASC LIMIT 5000';
+
+        system.debug('QUERY    ' + query);
+
+        data = Database.query(query);
+
+        /*
         data = [SELECT Id,
                        Donation_Name__c,
                        Donation_Amount__c,
@@ -105,7 +134,7 @@ global class BGE_HandsOnGridController{
                 WHERE NPSP_Data_Import_Batch__c =: pBatchId
                 ORDER BY createdDate ASC
                 LIMIT 5000];
-
+        */
     }
 
     /*
