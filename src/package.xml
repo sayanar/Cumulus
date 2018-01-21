@@ -519,7 +519,9 @@
         <members>defaultTokens</members>
         <members>svg</members>
         <members>SearchKeyChange</members>
-        <members>BGE_TemplateFieldDynamicRow</members>        
+        <members>BGE_TemplateFieldDynamicRow</members>
+        <members>BGE_AddTemplateFieldRowEvent</members>
+        <members>BGE_RemoveTemplateFieldRowEvent</members>
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
