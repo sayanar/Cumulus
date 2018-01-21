@@ -42,30 +42,6 @@
                 var activeData = JSON.parse('{!jsonString}');
                 var columnsData = JSON.parse('{!jsonColumnsString}');
 
-                /*
-                    var getData = (function () {
-
-                        var mydata = JSON.parse('{!jsonString}');
-
-                        return function () {
-
-                            var page  = parseInt(window.location.hash.replace('#', ''), 10) || 1,
-                                        limit = 20,
-                                        row   = (page - 1) * limit,
-                                        count = page * limit,
-                                        part  = [];
-
-                            for (;row < count;row++) {
-
-                                part.push(mydata[row]);
-                            }
-
-                            return part;
-                        }
-                    })();
-
-                    var data = getData();
-                */
 
                 table = document.getElementById('my-hot-table');
                 searchField = document.getElementById('handsonSearch');
@@ -578,8 +554,6 @@
 
                             var row = data[object.row];
 
-                            console.log('ROW    ' + row);
-
                             activeData.push(row);
                         }
 
@@ -660,19 +634,6 @@
                             <div class="slds-form-element__control">
                                 <output id="totalAmount" placeholder="0" style="width: 150px;"/>
                             </div>
-
-                        <!--<div class="slds-form-element">
-                            <div class="pagination">
-                                <div class="slds-button-group" role="group">
-                                    <a href="#1">1</a>
-                                    <a href="#2">2</a>
-                                    <a href="#3">3</a>
-                                    <a href="#4">4</a>
-                                    <a href="#5">5</a>
-                                    <a href="#6">6</a>
-                                </div>
-                            </div>
-                        </div>-->
                     </div>
                 </footer>
                 <!-- / FOOTER -->
