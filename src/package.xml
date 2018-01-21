@@ -518,6 +518,8 @@
         <members>dataProviderInterface</members>
         <members>defaultTokens</members>
         <members>svg</members>
+        <members>SearchKeyChange</members>
+        <members>BGE_TemplateFieldDynamicRow</members>        
         <name>AuraDefinitionBundle</name>
     </types>
     <types>
